@@ -7,7 +7,20 @@ export const corsOptions = {
       return callback(null, true);
     }
 
+    // Allow all if explicitly enabled in .env
+    if (process.env.ALLOW_ALL_ORIGINS === 'true') {
+      return callback(null, true);
+    }
+
     const cleanOrigin = origin.toLowerCase().replace(/\/+$/, "");
+
+    // Allow production frontend URLs configured via environment variables
+    if (process.env.CLIENT_URL && cleanOrigin === process.env.CLIENT_URL.toLowerCase().replace(/\/+$/, "")) {
+      return callback(null, true);
+    }
+    if (process.env.FRONTEND_URL && cleanOrigin === process.env.FRONTEND_URL.toLowerCase().replace(/\/+$/, "")) {
+      return callback(null, true);
+    }
 
     // 2. Exact match in allowedOrigins list
     if (allowedOrigins.includes(cleanOrigin) || allowedOrigins.includes(origin)) {
